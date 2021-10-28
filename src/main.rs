@@ -1,47 +1,83 @@
-extern crate quickersort;
-
 #[derive(Debug)]
 
 struct Student {
     full_name: String,
-    group: u32,
-    appraisals: [u32; 5]
+    group: u16,
+    appraisals: [u8; 5]
 }
 
-fn main() {
-    let students: [&Student; 10] = [
-        &Student {full_name: String::from("Зинин Н.А."), group: 2, appraisals: [2, 3, 4, 5, 2]},
-        &Student {full_name: String::from("Антонов П.П."), group: 3, appraisals: [2, 2, 4, 5, 2]},
-        &Student {full_name: String::from("Андреев В.В."), group: 4, appraisals: [2, 5, 4, 5, 2]},
-        &Student {full_name: String::from("Путин В.В."), group: 10, appraisals: [2, 4, 4, 5, 2]},
-        &Student {full_name: String::from("Милонов В.А."), group: 7, appraisals: [2, 3, 2, 5, 2]},
-        &Student {full_name: String::from("Меладзе П.П."), group: 6, appraisals: [2, 3, 4, 5, 2]},
-        &Student {full_name: String::from("Кучма М.М."), group: 11, appraisals: [2, 3, 5, 5, 2]},
-        &Student {full_name: String::from("Порошенко А.Б."), group: 5, appraisals: [2, 5, 5, 5, 2]},
-        &Student {full_name: String::from("Обама Б.Б."), group: 12, appraisals: [2, 2, 5, 2, 2]},
-        &Student {full_name: String::from("Байден Д.Ж."), group: 5, appraisals: [5, 4, 4, 5, 5]},
-    ];
-
-    let mut students_good = vec![];
-
-    for i in 0..students.len() {
-        for j in 0..students[i].appraisals.len() {
-            if students[i].appraisals[j] == 4 || students[i].appraisals[j] == 5 {
-                students_good.push(students[i]);
-            } else if students_good.len() != 0 && students[i].appraisals[j] == 2
-                        || students_good.len() != 0 && students[i].appraisals[j] == 3 {
-                students_good.remove(students_good.len() - 1);
-            }
+impl Student {
+    fn new(full_name: String, group: u16, appraisals: [u8; 5]) -> Self {
+        Student {
+            full_name,
+            group,
+            appraisals
         }
     }
 
-    for i in 0..students_good.len() {
-        if i >= 1 {
-            if students_good[i].full_name != students_good[i-1].full_name {
-                println!("{:?}", students_good[i]);                
-            }
-        } else {
-            println!("Учащийся {} в группе {} имеет оценки только 4 и 5!", students_good[i].full_name, students_good[i].group);
+    fn mean(&self) -> f32 {
+        let mut ret = 0.0;
+
+        for i in self.appraisals {
+            ret += i as f32
         }
+
+        ret / self.appraisals.len() as f32
+    }
+}
+
+fn main() {
+    let mut students: Vec<Student> = Vec::new();
+
+    students.push(Student::new("Зинин Н.А.".to_string(), 101, [2, 3, 4, 3, 5])); // 3.4
+    students.push(Student::new("Антонов Н.А.".to_string(), 121, [2, 2, 4, 3, 5])); // 3.2
+    students.push(Student::new("Путин Н.А.".to_string(), 131, [2, 5, 3, 3, 5])); // 3.6
+    students.push(Student::new("Милонов Н.А.".to_string(), 141, [2, 5, 2, 3, 5])); // 3.4
+    students.push(Student::new("Байден Н.А.".to_string(), 151, [2, 5, 4, 2, 5])); // 3.6
+    students.push(Student::new("Обама Н.А.".to_string(), 161, [2, 5, 4, 5, 5])); // 4.2
+    students.push(Student::new("Кучма Н.А.".to_string(), 171, [2, 5, 4, 3, 5])); // 3.8
+    students.push(Student::new("Порошенко Н.А.".to_string(), 181, [2, 5, 2, 2, 5])); // 3.2
+    students.push(Student::new("Меладзе Н.А.".to_string(), 191, [2, 5, 4, 4, 5])); // 4
+    students.push(Student::new("Антонов Н.А.".to_string(), 100, [2, 5, 4, 5, 5])); // 4.2
+
+    // 3.2
+    // 3.2
+    // 3.4
+    // 3.4
+    // 3.6
+    
+    // 3.6 //
+
+    // 3.8
+    // 4
+    // 4.2
+
+    let mut student_array_sort: Vec<Student> = Vec::new();
+
+    for stud in students.into_iter() {
+        if student_array_sort.is_empty() {
+            student_array_sort.push(stud);
+            continue;
+        }
+
+        // println!("{}, {}", stud.mean(), student_array_sort.last().unwrap().mean());
+
+        if stud.mean() > student_array_sort.last().unwrap().mean() ||
+            stud.mean() == student_array_sort.last().unwrap().mean() {
+            student_array_sort.push(stud);
+            continue
+        }
+
+        for (i, sort_stud) in student_array_sort.iter().enumerate() {
+            if sort_stud.mean() > stud.mean() {
+                student_array_sort.insert(i, stud);
+
+                break;
+            } 
+        }
+    }
+
+    for (i, stud) in student_array_sort.iter().enumerate() {
+        println!("{} - {} - {}", i, stud.full_name, stud.mean());
     }
 }
