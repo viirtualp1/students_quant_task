@@ -40,18 +40,6 @@ fn main() {
     students.push(Student::new("Меладзе Н.А.".to_string(), 191, [2, 5, 4, 4, 5])); // 4
     students.push(Student::new("Антонов Н.А.".to_string(), 100, [2, 5, 4, 5, 5])); // 4.2
 
-    // 3.2
-    // 3.2
-    // 3.4
-    // 3.4
-    // 3.6
-    
-    // 3.6 //
-
-    // 3.8
-    // 4
-    // 4.2
-
     let mut student_array_sort: Vec<Student> = Vec::new();
 
     for stud in students.into_iter() {
